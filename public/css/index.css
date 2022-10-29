@@ -1,0 +1,38 @@
+html, body {
+  margin: 0;
+  padding: 0;
+}
+
+.container {
+  display: flex;
+  min-height: 100vh;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  font-family: "M PLUS Rounded 1c";
+}
+
+.title {
+  position: relative;
+}
+
+.title h1 {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  white-space: nowrap;
+  font-size: 3rem;
+  margin: 0;
+  font-weight: bold;
+  text-shadow:2px 2px 0 #FFF, -2px -2px 0 #FFF,
+              -2px 2px 0 #FFF, 2px -2px 0 #FFF,
+              0px 2px 0 #FFF,  -2px 0 #FFF,
+              -2px 0 0 #FFF, 2px 0 0 #FFF;
+}
+
+.title img {
+  position: relative;
+  width: 150px;
+  opacity: 0.6;
+}
