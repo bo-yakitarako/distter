@@ -1,8 +1,24 @@
 import express from 'express';
+import session from 'express-session';
+import md5 from 'md5';
+import { auth, callback } from './twitter';
 
 const server = express();
 server.use(express.urlencoded({ extended: true }));
 server.use(express.json());
+server.use(
+  session({
+    secret: md5(Math.random().toString()),
+    name: 'session',
+    resave: false,
+    saveUninitialized: true,
+    cookie: {
+      path: '/',
+      httpOnly: true,
+      maxAge: 1000 * 60 * 60 * 24 * 7,
+    },
+  }),
+);
 
 const router = express.Router();
 
@@ -17,6 +33,8 @@ router.get('/linked', (req, res) => {
 });
 
 server.use('/', router);
+server.use('/auth', auth);
+server.use('/callback', callback);
 
 server.listen(3000, () => {
   console.log('サーバー起動しますわよ！');
