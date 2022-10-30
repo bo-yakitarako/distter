@@ -6,12 +6,15 @@
   "author": "bo-yakitarako",
   "license": "MIT",
   "private": true,
-  "type": "module",
+  "scripts": {
+    "server-build": "esbuild src/index.ts --bundle --minify --platform=node --outfile=dist/index.js"
+  },
   "devDependencies": {
     "@types/express": "^4.17.14",
     "@types/node": "^18.11.7",
     "@typescript-eslint/eslint-plugin": "^5.41.0",
     "@typescript-eslint/parser": "^5.41.0",
+    "esbuild": "^0.15.12",
     "eslint": "^8.26.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-import": "^2.26.0",

@@ -1,5 +1,5 @@
 {
   "watch": ["src", "ejs"],
-  "exec": "node --loader ts-node/esm src/index.ts",
+  "exec": "yarn server-build; node dist/index.js",
   "ext": "js ts ejs"
 }

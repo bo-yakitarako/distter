@@ -1,9 +1,4 @@
 import express from 'express';
-import path from 'path';
-import { fileURLToPath } from 'url';
-
-const __filename = fileURLToPath(import.meta.url); // eslint-disable-line @typescript-eslint/naming-convention
-const __dirname = path.dirname(__filename); // eslint-disable-line @typescript-eslint/naming-convention
 
 const server = express();
 server.use(express.urlencoded({ extended: true }));
