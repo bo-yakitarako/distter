@@ -1,0 +1,22 @@
+.link {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 350px;
+}
+
+.link-icon {
+  width: 120px;
+  height: auto;
+  opacity: 0.5;
+}
+
+.profile-image {
+  width: 100px;
+  height: auto;
+  border-radius: 100%;
+}
+
+.container p {
+  font-size: 24px;
+}

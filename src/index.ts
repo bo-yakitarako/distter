@@ -12,6 +12,10 @@ router.get('/', (req, res) => {
   res.render('../ejs/index.ejs');
 });
 
+router.get('/linked', (req, res) => {
+  res.render('../ejs/linked.ejs');
+});
+
 server.use('/', router);
 
 server.listen(3000, () => {
