@@ -29,14 +29,19 @@ client.on('messageCreate', async (message) => {
 
 client.login(TOKEN);
 
+const color = 0x94c2ff;
+
+export const hasDiscaordId = async (discordId: string) => {
+  const queryStr = `SELECT discord_id FROM users WHERE discord_id = '${discordId}'`;
+  const result = await query<{ discord_id: string }>(queryStr);
+  return result.length > 0;
+};
+
 const createLink = async (message: Message) => {
-  const existedDiscordIdQuery = `SELECT discord_id FROM users WHERE discord_id = '${message.author.id}'`;
-  const existedDiscordId = await query<{ discord_id: string }>(
-    existedDiscordIdQuery,
-  );
+  const existedDiscordId = await hasDiscaordId(message.author.id);
   const user = message.author;
-  const linkURL = `http://${domain}/auth`;
-  if (existedDiscordId.length > 0) {
+  const linkURL = `http://${domain}/auth?discord_id=${user.id}`;
+  if (existedDiscordId) {
     const description = `一応Twitterのほうのリンク貼っとくね\n[Twitter認証リンク](${linkURL})`;
     const embed: APIEmbed = {
       title: 'discordアカウントはもう僕には分かってるんだ',
@@ -44,6 +49,7 @@ const createLink = async (message: Message) => {
       thumbnail: {
         url: user.displayAvatarURL(),
       },
+      color,
     };
     await message.channel.send({ embeds: [embed] });
     return;
@@ -60,6 +66,7 @@ const createLink = async (message: Message) => {
     thumbnail: {
       url: user.displayAvatarURL(),
     },
+    color,
   };
   await message.channel.send({ embeds: [embed] });
 };
