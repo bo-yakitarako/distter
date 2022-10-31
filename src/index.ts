@@ -1,6 +1,7 @@
 import express from 'express';
 import session from 'express-session';
 import md5 from 'md5';
+import './bot';
 import { auth, callback } from './twitter';
 
 const server = express();
