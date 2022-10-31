@@ -23,7 +23,7 @@ client.on('messageCreate', async (message) => {
   if (message.author.bot) {
     return;
   }
-  if (message.content === '!link') {
+  if (message.content === 'ほおおおおおおぬおおおほほおおおい') {
     await createLink(message);
   }
   if (message.content === '!share') {
@@ -83,8 +83,16 @@ const share = async (message: Message) => {
   } else {
     try {
       await tweet(message.author.id, text.substring(0, 140));
-    } catch (e) {
-      title = 'よくわかんないけどツイートできなかったよ！';
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (e: any) {
+      switch (e.message) {
+        case '誰もいねえよバカ':
+          title = 'Twitter連携してからにしましょ';
+          break;
+        default:
+          title = 'よくわかんないけどツイートできなかったよ！';
+          break;
+      }
       console.log(e);
     }
   }
@@ -101,7 +109,7 @@ const extractText = async (message: Message) => {
   ).toJSON();
   let text = '';
   for (const m of messages) {
-    if (m.content === '!share' || m.author.id !== message.author.id) {
+    if (m.content.startsWith('!') || m.author.id !== message.author.id) {
       continue;
     }
     text = m.content;
