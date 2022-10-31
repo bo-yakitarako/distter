@@ -1,6 +1,7 @@
 import { APIEmbed, Client, GatewayIntentBits, Message } from 'discord.js';
 import { config } from 'dotenv';
 import { query } from './db';
+import { tweet } from './twitter';
 
 config();
 
@@ -24,6 +25,9 @@ client.on('messageCreate', async (message) => {
   }
   if (message.content === '!link') {
     await createLink(message);
+  }
+  if (message.content === '!share') {
+    await share(message);
   }
 });
 
@@ -66,6 +70,22 @@ const createLink = async (message: Message) => {
     thumbnail: {
       url: user.displayAvatarURL(),
     },
+    color,
+  };
+  await message.channel.send({ embeds: [embed] });
+};
+
+const share = async (message: Message) => {
+  const text = '再びこのツイートがかえってきた';
+  let title = 'ツイートしたよ！';
+  try {
+    await tweet(message.author.id, text);
+  } catch (e) {
+    title = 'よくわかんないけどツイートできなかったよ！';
+    console.log(e);
+  }
+  const embed: APIEmbed = {
+    title,
     color,
   };
   await message.channel.send({ embeds: [embed] });

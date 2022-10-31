@@ -3,7 +3,7 @@ import { Request, Response } from 'express';
 import { LoginResult, TwitterApi } from 'twitter-api-v2';
 import { hasDiscaordId } from './bot';
 import { query } from './db';
-import { encrypt } from './encrypt';
+import { decrypt, encrypt } from './encrypt';
 
 config();
 
@@ -92,4 +92,27 @@ const updateData = async (result: LoginResult, discordId: string) => {
     .map((key) => `${key} = '${data[key]}'`)
     .join(',');
   await query(`UPDATE users SET ${set} WHERE discord_id = '${discordId}'`);
+};
+
+type AccessToken = {
+  encrypted_access_token: string;
+  encrypted_access_token_secret: string;
+};
+export const tweet = async (discordId: string, text: string) => {
+  const queryString = `SELECT encrypted_access_token, encrypted_access_token_secret FROM users WHERE discord_id = '${discordId}'`;
+  const result = await query<AccessToken>(queryString);
+  if (result.length === 0) {
+    throw new Error('誰もいねえよバカ');
+  }
+  const { encrypted_access_token, encrypted_access_token_secret } = result[0];
+  const accessToken = decrypt(encrypted_access_token);
+  const accessSecret = decrypt(encrypted_access_token_secret);
+  const client = new TwitterApi({
+    appKey,
+    appSecret,
+    accessToken,
+    accessSecret,
+  });
+  const { user, id_str } = await client.v1.tweet(text);
+  return `https://twitter.com/${user.screen_name}/status/${id_str}`;
 };
