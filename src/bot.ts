@@ -76,17 +76,36 @@ const createLink = async (message: Message) => {
 };
 
 const share = async (message: Message) => {
-  const text = '再びこのツイートがかえってきた';
+  const text = await extractText(message);
   let title = 'ツイートしたよ！';
-  try {
-    await tweet(message.author.id, text);
-  } catch (e) {
-    title = 'よくわかんないけどツイートできなかったよ！';
-    console.log(e);
+  if (!text) {
+    title = 'チャット履歴少し遡ったけど、ツイートするものがないっぽいよ';
+  } else {
+    try {
+      await tweet(message.author.id, text.substring(0, 140));
+    } catch (e) {
+      title = 'よくわかんないけどツイートできなかったよ！';
+      console.log(e);
+    }
   }
   const embed: APIEmbed = {
     title,
     color,
   };
   await message.channel.send({ embeds: [embed] });
+};
+
+const extractText = async (message: Message) => {
+  const messages = (
+    await message.channel.messages.fetch({ limit: 10 })
+  ).toJSON();
+  let text = '';
+  for (const m of messages) {
+    if (m.content === '!share' || m.author.id !== message.author.id) {
+      continue;
+    }
+    text = m.content;
+    break;
+  }
+  return text;
 };
