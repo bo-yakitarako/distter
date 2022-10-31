@@ -7,13 +7,15 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "server-build": "esbuild src/index.ts --bundle --minify --platform=node --outfile=dist/index.js"
+    "server-build": "esbuild src/index.ts --bundle --minify --platform=node --outfile=dist/index.js --external:pg",
+    "create-users-table": "psql -d distter -f sql/create_users.sql"
   },
   "devDependencies": {
     "@types/express": "^4.17.14",
     "@types/express-session": "^1.17.5",
     "@types/md5": "^2.3.2",
     "@types/node": "^18.11.7",
+    "@types/pg": "^8.6.5",
     "@typescript-eslint/eslint-plugin": "^5.41.0",
     "@typescript-eslint/parser": "^5.41.0",
     "esbuild": "^0.15.12",
@@ -32,6 +34,7 @@
     "express": "^4.18.2",
     "express-session": "^1.17.3",
     "md5": "^2.3.0",
+    "pg": "^8.8.0",
     "twitter-api-v2": "^1.12.9"
   }
 }
