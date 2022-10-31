@@ -3,7 +3,7 @@ import { Client } from 'pg';
 
 config();
 
-export async function connect<T>(query: string) {
+export async function query<T>(query: string) {
   const client = new Client({
     user: process.env.PG_USERNAME,
     password: process.env.PG_PASSWORD,

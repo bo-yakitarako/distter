@@ -8,6 +8,7 @@
   "private": true,
   "scripts": {
     "server-build": "esbuild src/index.ts --bundle --minify --platform=node --outfile=dist/index.js --external:pg --external:discord.js",
+    "psql": "psql -d distter",
     "create-users-table": "psql -d distter -f sql/create_users.sql"
   },
   "devDependencies": {
