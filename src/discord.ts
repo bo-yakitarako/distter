@@ -8,9 +8,9 @@ config();
 const API_ENDPOINT = 'https://discord.com/api/v10';
 const CLIENT_ID = process.env.DISCORD_CLIENT_ID as string;
 const CLIENT_SECRET = process.env.DISCORD_CLIENT_SECRET as string;
-const DOMAIN = process.env.DOMAIN as string;
-const uri_domain = DOMAIN.includes('.') ? DOMAIN : 'localhost';
-const REDIRECT_URI = `http://${uri_domain}/discord_callback`;
+const ORIGIN = process.env.ORIGIN as string;
+const uri_origin = ORIGIN.includes('.') ? ORIGIN : 'http://localhost';
+const REDIRECT_URI = `${uri_origin}/discord_callback`;
 
 type Callback = { code: string };
 

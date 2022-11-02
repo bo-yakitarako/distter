@@ -16,11 +16,11 @@ declare module 'express-session' {
 
 const appKey = process.env.TWITTER_API_KEY as string;
 const appSecret = process.env.TWITTER_API_KEY_SECRET as string;
-const domain = process.env.DOMAIN as string;
+const origin = process.env.ORIGIN as string;
 const client = new TwitterApi({ appKey, appSecret });
 
 export const auth = async (req: Request, res: Response) => {
-  const authLink = await client.generateAuthLink(`http://${domain}/callback`, {
+  const authLink = await client.generateAuthLink(`${origin}/callback`, {
     linkMode: 'authorize',
   });
   const { discord_id } = req.session;
