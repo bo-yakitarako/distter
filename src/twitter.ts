@@ -25,7 +25,7 @@ export const auth = async (req: Request, res: Response) => {
   });
   const { discord_id } = req.session;
   if (!discord_id) {
-    res.redirect('/');
+    res.redirect('/error/linked/no_user');
     return;
   }
   req.session.oauth_token_secret = authLink.oauth_token_secret;
@@ -47,9 +47,13 @@ export const callback = async (
   /* eslint-enable @typescript-eslint/naming-convention */
 
   const existed = discord_id ? await hasDiscaordId(discord_id) : false;
+  if (!existed) {
+    res.redirect('/error/linked/no_discord_link');
+    return;
+  }
 
-  if (!oauth_token || !oauth_verifier || !oauth_token_secret || !existed) {
-    res.redirect('/');
+  if (!oauth_token || !oauth_verifier || !oauth_token_secret) {
+    res.redirect('/error/linked/twitter_reject');
     return;
   }
 
@@ -65,8 +69,7 @@ export const callback = async (
     await updateData(result, discord_id!); // eslint-disable-line @typescript-eslint/no-non-null-assertion
     res.redirect('/linked');
   } catch (e) {
-    res.send('失敗しちゃったっ☆てへっ');
-    console.log(e);
+    res.redirect('/error/linked/twitter_reject');
   }
 };
 

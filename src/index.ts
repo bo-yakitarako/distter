@@ -1,3 +1,4 @@
+import { config } from 'dotenv';
 import express from 'express';
 import session from 'express-session';
 import md5 from 'md5';
@@ -5,6 +6,9 @@ import './bot';
 import { select } from './db';
 import { discordCallback } from './discord';
 import { auth, callback } from './twitter';
+
+config();
+const oauthUrl = process.env.DISCORT_OAUTH_URL as string;
 
 const server = express();
 server.use(express.urlencoded({ extended: true }));
@@ -39,16 +43,41 @@ router.get('/linked', async (req, res) => {
     'twitter_avatar_url',
   ]);
   if (data === null) {
-    res.redirect('/');
+    res.redirect('/error/linked/no_user');
     return;
   }
   res.render('../ejs/linked.ejs', data);
 });
 
+const errorPage = (path: string, error_message: string) => {
+  router.get(path, async (req, res) => {
+    res.render('../ejs/error.ejs', { error_message, oauthUrl });
+  });
+};
+
+errorPage('/error', '不明なエラー。。。ようわからんぽよ。。。');
+errorPage(
+  '/error/linked/no_discord_link',
+  'まずはDiscordで!linkをやってみて。。。',
+);
+errorPage(
+  '/error/linked/twitter_reject',
+  'Twitter認証だめぽい。。。もっかい認証して。。。',
+);
+errorPage(
+  '/error/linked/no_user',
+  '誰だかわからんぽよ。。。もっかい認証して。。。',
+);
+
 server.use('/', router);
 server.use('/auth', auth);
 server.use('/callback', callback);
 server.use('/discord_callback', discordCallback);
+
+server.use((req, res) => {
+  const error_message = '404 Not Foundってやつです。。。';
+  res.status(404).render('../ejs/error.ejs', { error_message, oauthUrl });
+});
 
 server.listen(3000, () => {
   console.log('サーバー起動しますわよ！');

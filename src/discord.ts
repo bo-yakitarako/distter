@@ -49,14 +49,13 @@ export const discordCallback = async (
       },
     );
     if (!(await hasDiscaordId(user.id))) {
-      res.redirect('/');
+      res.redirect('/error/linked/no_discord_link');
       return;
     }
     req.session.discord_id = user.id;
     res.redirect('/auth');
   } catch (e) {
-    console.error(e);
-    res.redirect('/');
+    res.redirect('/error');
   }
 };
 

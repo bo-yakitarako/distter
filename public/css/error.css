@@ -1,0 +1,29 @@
+.error-message {
+  color: red;
+  font-size: 18px;
+}
+
+@media screen and (max-width: 600px) {
+  .error-message {
+    font-size: 16px;
+  }
+}
+
+.link-button {
+  background-color: #4CAF50; /* Green */
+  border: none;
+  color: white;
+  padding: 12px 24px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  cursor: pointer;
+  font-family: "M PLUS Rounded 1c";
+  border-radius: 8px;
+  transition: 0.2s ease background-color;
+}
+
+.link-button:hover {
+  background-color: #3e8e41;
+}

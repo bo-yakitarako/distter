@@ -31,6 +31,12 @@ html, body {
               -2px 0 0 #FFF, 2px 0 0 #FFF;
 }
 
+@media screen and (max-width: 600px) {
+  .title h1 {
+    font-size: 2rem;
+  }
+}
+
 .title img {
   position: relative;
   width: 150px;
