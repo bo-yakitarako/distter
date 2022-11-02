@@ -9,6 +9,7 @@ import { auth, callback } from './twitter';
 
 config();
 const oauthUrl = process.env.DISCORT_OAUTH_URL as string;
+const PORT = process.env.PORT ?? '3000';
 
 const server = express();
 server.use(express.urlencoded({ extended: true }));
@@ -79,6 +80,6 @@ server.use((req, res) => {
   res.status(404).render('../ejs/error.ejs', { error_message, oauthUrl });
 });
 
-server.listen(3000, () => {
+server.listen(PORT, () => {
   console.log('サーバー起動しますわよ！');
 });
