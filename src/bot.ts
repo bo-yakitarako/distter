@@ -1,12 +1,14 @@
 import { APIEmbed, Client, GatewayIntentBits, Message } from 'discord.js';
 import { config } from 'dotenv';
 import { query } from './db';
+import { hasDiscaordId } from './discord';
 import { tweet } from './twitter';
 
 config();
 
 const TOKEN = process.env.DISCORD_BOT_TOKEN as string;
-const domain = process.env.DOMAIN as string;
+const DISCORT_OAUTH_URL = process.env.DISCORT_OAUTH_URL as string;
+
 const client = new Client({
   intents: [
     GatewayIntentBits.Guilds,
@@ -23,7 +25,7 @@ client.on('messageCreate', async (message) => {
   if (message.author.bot) {
     return;
   }
-  if (message.content === 'ほおおおおおおぬおおおほほおおおい') {
+  if (message.content === '!link') {
     await createLink(message);
   }
   if (message.content === '!share') {
@@ -35,20 +37,13 @@ client.login(TOKEN);
 
 const color = 0x94c2ff;
 
-export const hasDiscaordId = async (discordId: string) => {
-  const queryStr = `SELECT discord_id FROM users WHERE discord_id = '${discordId}'`;
-  const result = await query<{ discord_id: string }>(queryStr);
-  return result.length > 0;
-};
-
 const createLink = async (message: Message) => {
   const existedDiscordId = await hasDiscaordId(message.author.id);
   const user = message.author;
-  const linkURL = `http://${domain}/auth?discord_id=${user.id}`;
   if (existedDiscordId) {
-    const description = `一応Twitterのほうのリンク貼っとくね\n[Twitter認証リンク](${linkURL})`;
+    const description = `認証リンク貼っとくね\n[認証リンク](${DISCORT_OAUTH_URL})`;
     const embed: APIEmbed = {
-      title: 'discordアカウントはもう僕には分かってるんだ',
+      title: 'もっかい認証すんのかな？',
       description,
       thumbnail: {
         url: user.displayAvatarURL(),
@@ -63,9 +58,9 @@ const createLink = async (message: Message) => {
     .join(',');
   const insertQuery = `INSERT INTO users (discord_id, discord_user_name, discord_avatar_url) VALUES (${insertData})`;
   await query(insertQuery);
-  const description = `下のリンクからTwitterアカウントの認証をしてほしいんじゃな～\n[Twitter認証リンク](${linkURL})`;
+  const description = `下のリンクからアカウントの認証をしてほしいんじゃな～\ndiscordの認証したら続けてTwitterの認証もしてね\n[認証リンク](${DISCORT_OAUTH_URL})`;
   const embed: APIEmbed = {
-    title: 'discordアカウントは分かったぜ！',
+    title: 'アカウント認証してほしいんじゃぁ～',
     description,
     thumbnail: {
       url: user.displayAvatarURL(),

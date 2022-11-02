@@ -2,6 +2,7 @@ import express from 'express';
 import session from 'express-session';
 import md5 from 'md5';
 import './bot';
+import { discordCallback } from './discord';
 import { auth, callback } from './twitter';
 
 const server = express();
@@ -36,6 +37,7 @@ router.get('/linked', (req, res) => {
 server.use('/', router);
 server.use('/auth', auth);
 server.use('/callback', callback);
+server.use('/discord_callback', discordCallback);
 
 server.listen(3000, () => {
   console.log('サーバー起動しますわよ！');

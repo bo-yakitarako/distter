@@ -1,8 +1,8 @@
 import { config } from 'dotenv';
 import { Request, Response } from 'express';
 import { LoginResult, TwitterApi } from 'twitter-api-v2';
-import { hasDiscaordId } from './bot';
 import { query } from './db';
+import { hasDiscaordId } from './discord';
 import { decrypt, encrypt } from './encrypt';
 
 config();
@@ -19,22 +19,16 @@ const appSecret = process.env.TWITTER_API_KEY_SECRET as string;
 const domain = process.env.DOMAIN as string;
 const client = new TwitterApi({ appKey, appSecret });
 
-type Auth = { discord_id: string };
-
-export const auth = async (
-  req: Request<any, any, any, Auth, Auth>, // eslint-disable-line @typescript-eslint/no-explicit-any
-  res: Response,
-) => {
+export const auth = async (req: Request, res: Response) => {
   const authLink = await client.generateAuthLink(`http://${domain}/callback`, {
     linkMode: 'authorize',
   });
-  const { discord_id } = req.query;
+  const { discord_id } = req.session;
   if (!discord_id) {
     res.redirect('/');
     return;
   }
   req.session.oauth_token_secret = authLink.oauth_token_secret;
-  req.session.discord_id = discord_id;
   res.redirect(authLink.url);
 };
 
