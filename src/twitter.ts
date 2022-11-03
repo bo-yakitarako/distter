@@ -95,7 +95,7 @@ type AccessToken = {
   encrypted_access_token: string;
   encrypted_access_token_secret: string;
 };
-export const tweet = async (discordId: string, text: string) => {
+export const tweet = async (discordId: string, tweet: string) => {
   const queryString = `SELECT encrypted_access_token, encrypted_access_token_secret FROM users WHERE discord_id = '${discordId}'`;
   const result = await query<AccessToken>(queryString);
   if (result.length === 0) {
@@ -110,6 +110,13 @@ export const tweet = async (discordId: string, text: string) => {
     accessToken,
     accessSecret,
   });
-  const { user, id_str } = await client.v1.tweet(text);
-  return `https://twitter.com/${user.screen_name}/status/${id_str}`;
+  const { user, id_str, created_at } = await client.v1.tweet(tweet);
+  const author = {
+    name: `${user.name} (@${user.screen_name})`,
+    url: `https://twitter.com/${user.screen_name}`,
+    icon_url: user.profile_image_url_https,
+  };
+  const timestamp = new Date(created_at);
+  const url = `https://twitter.com/${user.screen_name}/status/${id_str}`;
+  return { author, url, timestamp };
 };

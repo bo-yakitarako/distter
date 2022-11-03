@@ -50,7 +50,7 @@ const createLink = async (message: Message) => {
       },
       color,
     };
-    await message.channel.send({ embeds: [embed] });
+    await message.author.send({ embeds: [embed] });
     return;
   }
   const insertData = [user.id, user.username, user.displayAvatarURL()]
@@ -67,35 +67,45 @@ const createLink = async (message: Message) => {
     },
     color,
   };
-  await message.channel.send({ embeds: [embed] });
+  await message.author.send({ embeds: [embed] });
 };
 
 const share = async (message: Message) => {
   const text = await extractText(message);
-  let title = 'ツイートしたよ！';
   if (!text) {
-    title = 'チャット履歴少し遡ったけど、ツイートするものがないっぽいよ';
-  } else {
-    try {
-      await tweet(message.author.id, text.substring(0, 140));
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } catch (e: any) {
-      switch (e.message) {
-        case '誰もいねえよバカ':
-          title = 'Twitter連携してからにしましょ';
-          break;
-        default:
-          title = 'よくわかんないけどツイートできなかったよ！';
-          break;
-      }
-      console.log(e);
-    }
+    const embed: APIEmbed = {
+      title: 'ツイート失敗しました。。。',
+      description: 'チャット履歴少し遡ったけど、ツイートするものがないっぽいよ',
+      color,
+    };
+    message.author.send({ embeds: [embed] });
+    return;
   }
-  const embed: APIEmbed = {
-    title,
-    color,
-  };
-  await message.channel.send({ embeds: [embed] });
+  try {
+    const title = text.substring(0, 140);
+    const tweetResult = await tweet(message.author.id, title);
+    // @ts-ignore
+    const embed: APIEmbed = {
+      title,
+      color,
+      ...tweetResult,
+      footer: {
+        text: 'でぃすったーしぇあ',
+      },
+    };
+    await message.author.send({ embeds: [embed] });
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (e: any) {
+    const embed: APIEmbed = {
+      title: 'ツイート失敗しました。。。',
+      description:
+        e.message === '誰もいねえよバカ'
+          ? 'Twitter連携してからにしましょ'
+          : 'よくわかんないけどツイートできなかったよ',
+      color,
+    };
+    await message.author.send({ embeds: [embed] });
+  }
 };
 
 const extractText = async (message: Message) => {
