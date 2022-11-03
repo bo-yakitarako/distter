@@ -1,7 +1,7 @@
 import { config } from 'dotenv';
 import { Request, Response } from 'express';
 import { LoginResult, TwitterApi } from 'twitter-api-v2';
-import { query } from './db';
+import { query, select } from './db';
 import { hasDiscaordId } from './discord';
 import { decrypt, encrypt } from './encrypt';
 
@@ -91,17 +91,15 @@ const updateData = async (result: LoginResult, discordId: string) => {
   await query(`UPDATE users SET ${set} WHERE discord_id = '${discordId}'`);
 };
 
-type AccessToken = {
-  encrypted_access_token: string;
-  encrypted_access_token_secret: string;
-};
 export const tweet = async (discordId: string, tweet: string) => {
-  const queryString = `SELECT encrypted_access_token, encrypted_access_token_secret FROM users WHERE discord_id = '${discordId}'`;
-  const result = await query<AccessToken>(queryString);
-  if (result.length === 0) {
+  const result = await select(discordId, [
+    'encrypted_access_token',
+    'encrypted_access_token_secret',
+  ]);
+  if (result === null) {
     throw new Error('誰もいねえよバカ');
   }
-  const { encrypted_access_token, encrypted_access_token_secret } = result[0];
+  const { encrypted_access_token, encrypted_access_token_secret } = result;
   const accessToken = decrypt(encrypted_access_token);
   const accessSecret = decrypt(encrypted_access_token_secret);
   const client = new TwitterApi({
